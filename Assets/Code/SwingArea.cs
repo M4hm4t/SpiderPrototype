@@ -5,8 +5,8 @@ using UnityEngine;
 public class SwingArea : MonoBehaviour
 {
 	[SerializeField]
-	Transform spidey;
-	public Transform bob;
+	Transform player;
+	public Transform hangPoint;
 
 	[Range(5, 30)]
 	public int radius;
@@ -16,7 +16,7 @@ public class SwingArea : MonoBehaviour
 
 	[SerializeField]
 	float maxSpeed;
-	float bobMoveSpeed;
+	float hangPointSpeed;
 	float moveAngle;
 	float arcLength;
 	float speedDirection;
@@ -41,10 +41,10 @@ public class SwingArea : MonoBehaviour
 
 		while (true)
 		{
-			bobMoveSpeed = Mathf.Lerp(bobMoveSpeed, speedDirection * maxSpeed, Time.deltaTime);
-			moveAngle += bobMoveSpeed * Time.deltaTime;
+			hangPointSpeed = Mathf.Lerp(hangPointSpeed, speedDirection * maxSpeed, Time.deltaTime);
+			moveAngle += hangPointSpeed * Time.deltaTime;
 
-			bob.position = transform.position + Quaternion.AngleAxis(moveAngle, transform.forward) * Vector3.down * radius;
+			hangPoint.position = transform.position + Quaternion.AngleAxis(moveAngle, transform.forward) * Vector3.down * radius;
 
 			compareArcLength();
 
@@ -54,29 +54,29 @@ public class SwingArea : MonoBehaviour
 
 	private void makeSwingCalculations()
 	{
-		transform.position = new Vector3(spidey.position.x, spidey.position.y + radius, spidey.position.z);
+		//transform.position = new Vector3(player.position.x, player.position.y + radius, player.position.z);
 
 		right_arcPoint = transform.position + Quaternion.AngleAxis(angle, transform.forward) * Vector3.down * radius;
 		left_arcPoint = transform.position + Quaternion.AngleAxis(-angle, transform.forward) * Vector3.down * radius;
 
-		bob.position = new Vector3(transform.position.x, transform.position.y - radius, transform.position.z);
+		hangPoint.position = new Vector3(transform.position.x, transform.position.y - radius, transform.position.z);
 
 		arcLength = (2 * Mathf.PI * radius * angle) / 360;
 
 		moveAngle = 0;
-		bobMoveSpeed = 0;
+		hangPointSpeed = 0;
 		speedDirection = -1;
 	}
 
 	private void compareArcLength()
 	{
-		float bobAngle = 180 - Vector3.Angle(transform.up, bob.position - transform.position);
+		float bobAngle = 180 - Vector3.Angle(transform.up, hangPoint.position - transform.position);
 
 		float bobArcLength = (2 * Mathf.PI * radius * bobAngle) / 360;
 
 		if (bobArcLength > arcLength)
 		{
-			if (Vector3.Distance(bob.position, right_arcPoint) < Vector3.Distance(bob.position, left_arcPoint)) speedDirection = -1;
+			if (Vector3.Distance(hangPoint.position, right_arcPoint) < Vector3.Distance(hangPoint.position, left_arcPoint)) speedDirection = -1;
 			else speedDirection = 1;
 		}
 	}
